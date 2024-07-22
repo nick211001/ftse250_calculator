@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intrinsic Value Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Intrinsic Value Calculator</h1>
+      <form id="input-form">
+        <div class="form-group">
+          <label for="desiredReturn"
+            >Desired Level of Return on Investment (as a percentage):</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            id="desiredReturn"
+            step="0.01"
+            min="0"
+            max="100"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="marginOfSafety"
+            >Margin of Safety (as a percentage):</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            id="marginOfSafety"
+            step="0.01"
+            min="0"
+            max="100"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Calculate</button>
+      </form>
+      <div id="results" class="mt-5">
+        <h2>Results</h2>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Intrinsic Value</th>
+              <th>Market Value</th>
+              <th>Undervalued</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#input-form").on("submit", function (event) {
+          event.preventDefault();
+
+          const desiredReturn = parseFloat($("#desiredReturn").val()) / 100;
+          const marginOfSafety = parseFloat($("#marginOfSafety").val()) / 100;
+
+          $.ajax({
+            url: "/calculate",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ desiredReturn, marginOfSafety }),
+            success: function (data) {
+              $("#results-body").empty();
+              data.forEach((result) => {
+                $("#results-body").append(`
+                                <tr>
+                                    <td>${result.Company}</td>
+                                    <td>${result.IntrinsicValue}</td>
+                                    <td>${result.MarketValue}</td>
+                                    <td>${result.Undervalued}</td>
+                                </tr>
+                            `);
+              });
+            },
+            error: function (err) {
+              console.error(err);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
