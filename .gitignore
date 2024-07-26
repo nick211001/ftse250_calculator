@@ -49,3 +49,8 @@ ntuser.ini
 # Windows
 Thumbs.db
 ehthumbs.db
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
