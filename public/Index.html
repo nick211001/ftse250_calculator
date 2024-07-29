@@ -75,7 +75,7 @@
           const marginOfSafety = parseFloat($("#marginOfSafety").val()) / 100; // Convert to decimal
 
           $.ajax({
-            url: "https://ftse250-calculator-env.elasticbeanstalk.com/calculate", // Replace with your Elastic Beanstalk URL
+            url: "/calculate", // Remove the hardcoded Elastic Beanstalk URL
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({ desiredReturn, marginOfSafety }),
