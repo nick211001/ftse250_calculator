@@ -51,7 +51,7 @@ function calculateDCF(freeCashFlows, discountRate, perpetualGrowthRate) {
 // Create Express app
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Endpoint to handle calculation
 app.post("/calculate", async (req, res) => {
