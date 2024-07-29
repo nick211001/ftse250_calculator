@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const xlsx = require("xlsx");
 const csv = require("csv-parser");
+const path = require("path"); // Add this line
 
 // Helper function to read Excel files
 function readExcelFile(filePath, sheetName) {
@@ -51,7 +52,7 @@ function calculateDCF(freeCashFlows, discountRate, perpetualGrowthRate) {
 // Create Express app
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // Update this line
 
 // Endpoint to handle calculation
 app.post("/calculate", async (req, res) => {
