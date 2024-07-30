@@ -11,8 +11,8 @@ phases:
 
   pre_build:
     commands:
-      - echo Pre-build phase...
-      #- npm run pre-build
+      - echo "Linking project to Netlify site..."
+      - netlify link --site 07cc5398-d6cc-4ce9-b799-633a2f4d8bef
 
   build:
     commands:
