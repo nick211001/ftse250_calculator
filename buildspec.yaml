@@ -2,13 +2,23 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 20
     commands:
       - echo Installing dependencies...
       - npm install
+      - npm install -g netlify-cli # Add this line to install Netlify CLI
+
+  pre_build:
+    commands:
+      - echo Pre-build phase...
+      - npm run pre-build
+
   build:
     commands:
       - echo Build started on `date`
       - npm run build
+
   post_build:
     commands:
       - echo Build completed on `date`
@@ -18,4 +28,3 @@ phases:
 artifacts:
   files:
     - "**/*"
-  discard-paths: yes
