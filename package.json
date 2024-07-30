@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "build": "npm install && npm run build:static",
-    "build:static": "echo 'No build step required'",
-    "deploy": "netlify deploy --prod"
+    "build:static": "mkdir -p dist && cp -r public/* dist/",
+    "deploy": "netlify deploy --prod --dir=dist"
   },
   "dependencies": {
     "express": "^4.17.1",
