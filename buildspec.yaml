@@ -12,7 +12,7 @@ phases:
   pre_build:
     commands:
       - echo Pre-build phase...
-      - npm run pre-build
+      #- npm run pre-build
 
   build:
     commands:
