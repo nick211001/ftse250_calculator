@@ -1,0 +1,8 @@
+[build]
+  publish = "public"  # Change to your actual publish directory
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/env.js"
+  to = "/.netlify/functions/env"
+  status = 200
