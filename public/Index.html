@@ -67,22 +67,29 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-      $(document).ready(function () {
-        $("#input-form").on("submit", function (event) {
-          event.preventDefault();
+      window.addEventListener("load", function () {
+        fetch("/env.js")
+          .then((response) => response.json())
+          .then((env) => {
+            window.API_URL = env.API_URL;
 
-          const desiredReturn = parseFloat($("#desiredReturn").val()) / 100; // Convert to decimal
-          const marginOfSafety = parseFloat($("#marginOfSafety").val()) / 100; // Convert to decimal
+            // Use API_URL in your AJAX request
+            $("#input-form").on("submit", function (event) {
+              event.preventDefault();
 
-          $.ajax({
-            url: "/calculate", // Remove the hardcoded Elastic Beanstalk URL
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ desiredReturn, marginOfSafety }),
-            success: function (data) {
-              $("#results-body").empty();
-              data.forEach((result) => {
-                $("#results-body").append(`
+              const desiredReturn = parseFloat($("#desiredReturn").val()) / 100; // Convert to decimal
+              const marginOfSafety =
+                parseFloat($("#marginOfSafety").val()) / 100; // Convert to decimal
+
+              $.ajax({
+                url: window.API_URL + "/calculate",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ desiredReturn, marginOfSafety }),
+                success: function (data) {
+                  $("#results-body").empty();
+                  data.forEach((result) => {
+                    $("#results-body").append(`
                   <tr>
                     <td>${result.Company}</td>
                     <td>${result.IntrinsicValue}</td>
@@ -90,13 +97,17 @@
                     <td>${result.Undervalued}</td>
                   </tr>
                 `);
+                  });
+                },
+                error: function (err) {
+                  console.error(err);
+                },
               });
-            },
-            error: function (err) {
-              console.error(err);
-            },
-          });
-        });
+            });
+          })
+          .catch((error) =>
+            console.error("Error fetching environment variables:", error)
+          );
       });
     </script>
   </body>
