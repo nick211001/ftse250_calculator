@@ -6,3 +6,7 @@
   from = "/env.js"
   to = "/.netlify/functions/env"
   status = 200
+
+  [context.production.environment]
+  NETLIFY_AUTH_TOKEN = "nfp_CbCbxevo9GYEcnYRVdEFEie56ymaRnh4e8be"
+  NETLIFY_SITE_ID = "07cc5398-d6cc-4ce9-b799-633a2f4d8bef"
