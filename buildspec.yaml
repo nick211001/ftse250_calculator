@@ -23,8 +23,7 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Starting deployment...
-      - npm run deploy
-      - netlify deploy --prod --auth $NETLIFY_AUTH_TOKEN --site 07cc5398-d6cc-4ce9-b799-633a2f4d8bef
+      - netlify deploy --prod --auth $NETLIFY_AUTH_TOKEN --site 07cc5398-d6cc-4ce9-b799-633a2f4d8bef --dir=dist
 artifacts:
   files:
     - "**/*"
