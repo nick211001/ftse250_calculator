@@ -3,7 +3,8 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const xlsx = require("xlsx");
 const csv = require("csv-parser");
-const path = require("path"); // Add this line
+const path = require("path");
+const cors = require("cors");
 
 // Helper function to read Excel files
 function readExcelFile(filePath, sheetName) {
@@ -52,24 +53,23 @@ function calculateDCF(freeCashFlows, discountRate, perpetualGrowthRate) {
 // Create Express app
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "public"))); // Update this line
+app.use(cors()); // Enable CORS for all routes
+app.use(express.static(path.join(__dirname, "public")));
+
+// Endpoint to serve environment variables
+app.get("/env.js", (req, res) => {
+  res.send(`window.API_URL="${process.env.API_URL}";`);
+});
 
 // Endpoint to handle calculation
 app.post("/calculate", async (req, res) => {
   const { desiredReturn, marginOfSafety } = req.body;
 
   try {
-    const freeCashFlowData = readExcelFile(
-      "companies_full_list.xlsx",
-      "Sheet1"
-    );
-    const perpetualGrowthRates = readExcelFile(
-      "perpetual_growth_rate.xlsx",
-      "Sheet1"
-    );
+    const freeCashFlowData = readExcelFile("companies_full_list.xlsx", "Sheet1");
+    const perpetualGrowthRates = readExcelFile("perpetual_growth_rate.xlsx", "Sheet1");
     const marketValues = await readCSVFile("ftse250_companies.csv");
 
-    // Debug: Log the data read from files
     console.log("Free Cash Flow Data:", freeCashFlowData);
     console.log("Perpetual Growth Rates:", perpetualGrowthRates);
     console.log("Market Values:", marketValues);
@@ -94,30 +94,21 @@ app.post("/calculate", async (req, res) => {
         company["Year 10 FCF"],
       ];
 
-      // Debug: Log the free cash flows
       console.log(`Free Cash Flows for ${companyName}:`, freeCashFlows);
 
-      // Check if any free cash flow value is undefined
       if (freeCashFlows.some((value) => value === undefined)) {
-        console.error(
-          `Missing free cash flow data for company: ${companyName}`
-        );
+        console.error(`Missing free cash flow data for company: ${companyName}`);
         return;
       }
 
       const freeCashFlowsNumbers = freeCashFlows.map(Number);
-      console.log(
-        `Free Cash Flows Numbers for ${companyName}:`,
-        freeCashFlowsNumbers
-      );
+      console.log(`Free Cash Flows Numbers for ${companyName}:`, freeCashFlowsNumbers);
 
       const growthRateData = perpetualGrowthRates.find(
         (rate) => rate.Company === companyName
       );
       if (!growthRateData) {
-        console.error(
-          `Perpetual growth rate not found for company: ${companyName}`
-        );
+        console.error(`Perpetual growth rate not found for company: ${companyName}`);
         return;
       }
       const perpetualGrowthRate = parseFloat(growthRateData.Rate);
@@ -150,7 +141,6 @@ app.post("/calculate", async (req, res) => {
       });
     });
 
-    // Debug: Log the results
     console.log("Results:", results);
 
     results.sort(
