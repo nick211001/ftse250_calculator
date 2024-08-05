@@ -13,6 +13,11 @@
     "express": "^4.17.1",
     "body-parser": "^1.19.0",
     "xlsx": "^0.17.0",
-    "csv-parser": "^3.0.0"
+    "csv-parser": "^3.0.0",
+    "path": "^0.12.7",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "netlify-cli": "^15.4.0" 
   }
 }
