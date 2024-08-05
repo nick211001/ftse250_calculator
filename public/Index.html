@@ -1,114 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Intrinsic Value Calculator</title>
-    <style>
-      /* Add your CSS styles here */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      form {
-        margin-bottom: 20px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Intrinsic Value Calculator</h1>
-    <form id="input-form">
-      <label for="desiredReturn">Desired Return on Investment (%):</label>
-      <input
-        type="number"
-        id="desiredReturn"
-        name="desiredReturn"
-        step="0.01"
-        required
-      />
-      <br /><br />
-      <label for="marginOfSafety">Margin of Safety (%):</label>
-      <input
-        type="number"
-        id="marginOfSafety"
-        name="marginOfSafety"
-        step="0.01"
-        required
-      />
-      <br /><br />
-      <button type="submit">Calculate</button>
-    </form>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intrinsic Value Calculator</title>
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Intrinsic Value Calculator</h1>
+  <form id="input-form">
+    <label for="desiredReturn">Desired Return on Investment (%):</label>
+    <input type="number" id="desiredReturn" name="desiredReturn" step="0.01" required />
+    <br /><br />
+    <label for="marginOfSafety">Margin of Safety (%):</label>
+    <input type="number" id="marginOfSafety" name="marginOfSafety" step="0.01" required />
+    <br /><br />
+    <button type="submit">Calculate</button>
+  </form>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Company</th>
-          <th>Intrinsic Value</th>
-          <th>Market Value</th>
-          <th>Undervalued</th>
-        </tr>
-      </thead>
-      <tbody id="results-body">
-        <!-- Results will be appended here -->
-      </tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Intrinsic Value</th>
+        <th>Market Value</th>
+        <th>Undervalued</th>
+      </tr>
+    </thead>
+    <tbody id="results-body">
+      <!-- Results will be appended here -->
+    </tbody>
+  </table>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      window.addEventListener("load", function () {
-        fetch("/env.js")
-          .then((response) => response.json())
-          .then((env) => {
-            window.API_URL = env.API_URL;
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    window.addEventListener("load", function () {
+      fetch("/env.js")
+        .then(response => response.text())
+        .then(scriptContent => {
+          const script = document.createElement("script");
+          script.textContent = scriptContent;
+          document.body.appendChild(script);
 
-            // Use API_URL in your AJAX request
-            $("#input-form").on("submit", function (event) {
-              event.preventDefault();
+          // Use API_URL in your AJAX request
+          $("#input-form").on("submit", function (event) {
+            event.preventDefault();
 
-              const desiredReturn = parseFloat($("#desiredReturn").val()) / 100; // Convert to decimal
-              const marginOfSafety =
-                parseFloat($("#marginOfSafety").val()) / 100; // Convert to decimal
+            const desiredReturn = parseFloat($("#desiredReturn").val()) / 100; // Convert to decimal
+            const marginOfSafety = parseFloat($("#marginOfSafety").val()) / 100; // Convert to decimal
 
-              $.ajax({
-                url: window.API_URL + "/calculate",
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ desiredReturn, marginOfSafety }),
-                success: function (data) {
-                  $("#results-body").empty();
-                  data.forEach((result) => {
-                    $("#results-body").append(`
-                  <tr>
-                    <td>${result.Company}</td>
-                    <td>${result.IntrinsicValue}</td>
-                    <td>${result.MarketValue}</td>
-                    <td>${result.Undervalued}</td>
-                  </tr>
-                `);
-                  });
-                },
-                error: function (err) {
-                  console.error(err);
-                },
-              });
+            $.ajax({
+              url: window.API_URL + "/calculate",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({ desiredReturn, marginOfSafety }),
+              success: function (data) {
+                $("#results-body").empty();
+                data.forEach((result) => {
+                  $("#results-body").append(`
+                    <tr>
+                      <td>${result.Company}</td>
+                      <td>${result.IntrinsicValue}</td>
+                      <td>${result.MarketValue}</td>
+                      <td>${result.Undervalued}</td>
+                    </tr>
+                  `);
+                });
+              },
+              error: function (err) {
+                console.error(err);
+              },
             });
-          })
-          .catch((error) =>
-            console.error("Error fetching environment variables:", error)
-          );
-      });
-    </script>
-  </body>
+          });
+        })
+        .catch(error => console.error("Error fetching environment variables:", error));
+    });
+  </script>
+</body>
 </html>
